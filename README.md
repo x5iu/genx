@@ -18,7 +18,7 @@
 ## 安装
 
 ```shell
-go install github.com/x5iu/genx
+go install github.com/x5iu/genx@latest
 ```
 
 ## 使用
