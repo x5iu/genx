@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
 	"strings"
 )
 
@@ -18,15 +19,17 @@ func main() {
 
 var (
 	list bool
+	run  string
 )
 
 func init() {
 	Root.Flags().BoolVarP(&list, "list", "l", false, "list commands without running `go generate`")
+	Root.Flags().StringVarP(&run, "run", "r", "", "specifies a regular expression to select directives whose full original source text matches the expression")
 }
 
 var Root = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.1.1",
+	Version:       "v0.2.0",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -90,6 +93,22 @@ var Root = &cobra.Command{
 						Command: command,
 					})
 				}
+			}
+		}
+
+		if run != "" {
+			var re *regexp.Regexp
+			if re, err = regexp.Compile(run); err != nil {
+				return err
+			}
+			copied := make([]*GenerateItem, len(items))
+			copy(copied, items)
+			items = items[:0]
+			for _, item := range copied {
+				if re != nil && !re.MatchString(item.Command.Cmd) {
+					continue
+				}
+				items = append(items, item)
 			}
 		}
 
