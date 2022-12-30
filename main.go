@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	"io"
@@ -27,7 +26,7 @@ func init() {
 
 var Root = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.1.0",
+	Version:       "v0.1.1",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -97,6 +96,7 @@ var Root = &cobra.Command{
 		align(pwd, items)
 		generated := make(map[string]struct{}, len(items))
 		for _, s := range items {
+			fmt.Println(s.Repr)
 			if !list {
 				dir := path.Dir(s.File)
 				if _, exists := generated[dir]; !exists {
@@ -106,7 +106,6 @@ var Root = &cobra.Command{
 					generated[dir] = struct{}{}
 				}
 			}
-			fmt.Println(s.Repr)
 		}
 
 		return nil
@@ -142,13 +141,20 @@ func Generate(dir string) (err error) {
 		return err
 	}
 	cmd := exec.Command("go", "generate", ".")
-	var stderr bytes.Buffer
+	var (
+		stdout bytes.Buffer
+		stderr bytes.Buffer
+	)
+	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err = cmd.Run(); err != nil {
 		return err
 	}
+	if stdout.Len() > 0 {
+		fmt.Println(stdout.String())
+	}
 	if stderr.Len() > 0 {
-		return errors.New(stderr.String())
+		fmt.Println(stderr.String())
 	}
 	return nil
 }

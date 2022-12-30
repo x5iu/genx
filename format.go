@@ -20,7 +20,7 @@ var (
 	boldGreen      = color.New(color.FgGreen, color.Bold).SprintfFunc()
 	green          = color.New(color.FgGreen).SprintfFunc()
 	italicBoldBlue = color.New(color.FgBlue, color.Italic, color.Bold).SprintfFunc()
-	boldCyan       = color.New(color.FgCyan, color.Bold).SprintfFunc()
+	boldHiWhite    = color.New(color.FgHiWhite, color.Bold).SprintfFunc()
 )
 
 func align(pwd string, items []*GenerateItem) {
@@ -48,9 +48,9 @@ func format(command string) string {
 			args[i] = italicBoldBlue(arg)
 		} else if strings.HasPrefix(arg, "-") {
 			if eq := strings.Index(arg, "="); eq >= 0 {
-				args[i] = boldCyan(arg[:eq]) + arg[eq:]
+				args[i] = boldHiWhite(arg[:eq]) + arg[eq:]
 			} else {
-				args[i] = boldCyan(arg)
+				args[i] = boldHiWhite(arg)
 			}
 		} else if strings.HasPrefix(arg, "\"") || strings.HasPrefix(arg, "'") {
 			args[i] = green(arg)
