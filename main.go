@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"github.com/spf13/cobra"
 	"io"
@@ -29,7 +28,7 @@ func init() {
 
 var Root = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.2.0",
+	Version:       "v0.2.1",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -160,22 +159,10 @@ func Generate(dir string) (err error) {
 		return err
 	}
 	cmd := exec.Command("go", "generate", ".")
-	var (
-		stdout bytes.Buffer
-		stderr bytes.Buffer
-	)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err = cmd.Run(); err != nil {
-		return err
-	}
-	if stdout.Len() > 0 {
-		fmt.Println(stdout.String())
-	}
-	if stderr.Len() > 0 {
-		fmt.Println(stderr.String())
-	}
-	return nil
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 type GenerateItem struct {
