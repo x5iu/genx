@@ -35,6 +35,8 @@ genx service/wechat
 
 `genx` 将从给定的目录路径开始，递归地扫描该目录及目录下所有子目录中的 `.go` 文件，识别其中内嵌的 `//go:generate` 指令，并在该目录下执行 `go generate` 命令；如果同一个目录下包含多个 `//go:generate` 指令，那么这个目录也只会被执行一次 `go generate`，而不会多次重复执行。
 
+### `-l/--list` 参数
+
 `genx` 还会列出已执行的 `//go:generate` 指令，如果你希望只查看 `//go:generate` 指令而不实际执行 `go generate` 命令，可以添加 `-l/--list` 参数：
 
 ```shell
@@ -42,5 +44,12 @@ genx -l .
 genx --list .
 ```
 
+### `-r/--run` 参数
 
+如果只想执行指定的 `//go:generate` 指令，`genx` 提供一个类似于 `go generate -run "regexp"` 的参数 `-r/--run`，该参数接收一个正则表达式字符串，`genx` 将通过该正则表达式筛选需要执行的 `//go:generate` 指令：
+
+```shell
+genx -r defc
+genx --run "go run .*"
+```
 
