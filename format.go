@@ -76,12 +76,12 @@ func split(line string) (args []string) {
 				arg = arg[:0]
 			}
 		case '"':
-			if !(i > 0 && line[i-1] == '\\' && !singleQuoted) {
+			if !(i > 0 && line[i-1] == '\\' || singleQuoted) {
 				doubleQuoted = !doubleQuoted
 			}
 			arg = append(arg, ch)
 		case '\'':
-			if !(i > 0 && line[i-1] == '\'' && !doubleQuoted) {
+			if !(i > 0 && line[i-1] == '\\' || doubleQuoted) {
 				singleQuoted = !singleQuoted
 			}
 			arg = append(arg, ch)
