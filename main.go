@@ -22,15 +22,22 @@ var (
 )
 
 func init() {
-	Root.Flags().BoolVarP(&list, "list", "l", false, "list commands without running `go generate`")
+	Root.SetHelpCommand(&cobra.Command{Hidden: true})
+	Root.Flags().BoolVarP(&list, "list", "l", false, "list commands without running \"go generate\"")
 	Root.Flags().StringVarP(&run, "run", "r", "", "specifies a regular expression to select directives whose full original source text matches the expression")
 }
 
 var Root = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.2.2",
+	Version:       "v0.3.0",
 	SilenceUsage:  true,
 	SilenceErrors: true,
+	CompletionOptions: cobra.CompletionOptions{
+		DisableDefaultCmd:   true,
+		DisableNoDescFlag:   true,
+		DisableDescriptions: true,
+		HiddenDefaultCmd:    true,
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		pwd, err := os.Getwd()
 		if err != nil {
