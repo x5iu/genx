@@ -29,7 +29,7 @@ func init() {
 
 var Root = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.3.0",
+	Version:       "v0.3.1",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	CompletionOptions: cobra.CompletionOptions{
@@ -165,7 +165,13 @@ func Generate(dir string) (err error) {
 	if err = os.Chdir(dir); err != nil {
 		return err
 	}
-	cmd := exec.Command("go", "generate", ".")
+	args := make([]string, 0, 4)
+	args = append(args, "generate")
+	if run != "" {
+		args = append(args, "-run", run)
+	}
+	args = append(args, ".")
+	cmd := exec.Command("go", args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
