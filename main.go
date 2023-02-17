@@ -7,8 +7,9 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -29,7 +30,7 @@ func init() {
 
 var Root = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.3.1",
+	Version:       "v0.4.0",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	CompletionOptions: cobra.CompletionOptions{
@@ -52,11 +53,11 @@ var Root = &cobra.Command{
 		items := make([]*GenerateItem, 0, 10)
 		for queue.Len() > 0 {
 			dir := queue.Pop()
-			if !path.IsAbs(dir) {
-				dir = path.Join(pwd, dir)
+			if !isAbs(dir) {
+				dir = filepath.Join(pwd, dir)
 			}
 
-			assert(path.IsAbs(dir), "not an abs path")
+			assert(isAbs(dir), "not an abs path: "+strconv.Quote(dir))
 			stat, err := os.Stat(dir)
 			if err != nil {
 				return err
@@ -73,17 +74,17 @@ var Root = &cobra.Command{
 
 			for _, file := range files {
 				name := file.Name()
-				if !path.IsAbs(name) {
-					name = path.Join(dir, name)
+				if !isAbs(name) {
+					name = filepath.Join(dir, name)
 				}
 
-				assert(path.IsAbs(name), "not an abs path")
+				assert(isAbs(name), "not an abs path: "+strconv.Quote(name))
 				if file.IsDir() {
 					queue.Push(name)
 					continue
 				}
 
-				if ext := path.Ext(name); ext != GoExt {
+				if ext := filepath.Ext(name); ext != GoExt {
 					continue
 				}
 
@@ -123,7 +124,7 @@ var Root = &cobra.Command{
 		for _, s := range items {
 			fmt.Println(s.Repr)
 			if !list {
-				dir := path.Dir(s.File)
+				dir := filepath.Dir(s.File)
 				if _, exists := generated[dir]; !exists {
 					if err = Generate(dir); err != nil {
 						return err
