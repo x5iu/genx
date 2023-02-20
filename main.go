@@ -30,7 +30,7 @@ func init() {
 
 var Root = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.4.0",
+	Version:       "v0.4.1",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	CompletionOptions: cobra.CompletionOptions{

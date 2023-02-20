@@ -3,14 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"path"
 	"strconv"
 	"strings"
 )
 
 func shorten(pwd string, name string) string {
 	if strings.HasPrefix(name, pwd) {
-		assert(path.IsAbs(name), "not an abs path")
+		assert(isAbs(name), "not an abs path: "+strconv.Quote(name))
 		return strings.TrimPrefix(name, pwd+"/")
 	}
 	return name
