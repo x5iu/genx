@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -30,7 +31,7 @@ func init() {
 
 var Root = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.4.1",
+	Version:       "v0.5.0",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	CompletionOptions: cobra.CompletionOptions{
@@ -63,13 +64,16 @@ var Root = &cobra.Command{
 				return err
 			}
 
+			var files []fs.DirEntry
 			if !stat.IsDir() {
-				return fmt.Errorf("%q is not an directory", dir)
-			}
-
-			files, err := os.ReadDir(dir)
-			if err != nil {
-				return err
+				files = []fs.DirEntry{
+					&FileEntry{Filename: dir},
+				}
+			} else {
+				files, err = os.ReadDir(dir)
+				if err != nil {
+					return err
+				}
 			}
 
 			for _, file := range files {
@@ -137,6 +141,15 @@ var Root = &cobra.Command{
 		return nil
 	},
 }
+
+type FileEntry struct {
+	Filename string
+}
+
+func (f *FileEntry) Name() string               { return f.Filename }
+func (f *FileEntry) IsDir() bool                { return false }
+func (f *FileEntry) Type() fs.FileMode          { panic("unreachable") }
+func (f *FileEntry) Info() (fs.FileInfo, error) { panic("unreachable") }
 
 const (
 	GoExt      = ".go"
