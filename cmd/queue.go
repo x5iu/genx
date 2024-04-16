@@ -1,4 +1,4 @@
-package main
+package cmd
 
 type Queue interface {
 	Len() int

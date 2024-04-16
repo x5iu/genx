@@ -1,8 +1,10 @@
-//go:build windows
+//go:build !windows
 
-package main
+package cmd
 
-import "path/filepath"
+import (
+	"path/filepath"
+)
 
 func isAbs(path string) bool {
 	return filepath.IsAbs(path)

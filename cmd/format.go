@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ var (
 	boldHiWhite    = color.New(color.FgHiWhite, color.Bold).SprintfFunc()
 )
 
-func align(pwd string, items []*GenerateItem) {
+func align(pwd string, items []*generateItem) {
 	var width int
 	for _, item := range items {
 		if l := len(shorten(pwd, item.File)) + len(strconv.Itoa(item.Command.Pos)); l > width {
@@ -39,7 +39,7 @@ func align(pwd string, items []*GenerateItem) {
 }
 
 func format(command string) string {
-	command = strings.TrimPrefix(command, GoGenerate)
+	command = strings.TrimPrefix(command, goGeneratePrefix)
 	args := split(command)
 	for i := 0; i < len(args); i++ {
 		arg := args[i]
