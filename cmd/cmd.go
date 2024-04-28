@@ -27,7 +27,7 @@ func init() {
 
 var Generate = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.6.0",
+	Version:       "v0.6.1",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	CompletionOptions: cobra.CompletionOptions{
@@ -120,16 +120,11 @@ var Generate = &cobra.Command{
 		}
 
 		align(pwd, items)
-		generated := make(map[string]struct{}, len(items))
 		for _, s := range items {
 			fmt.Println(s.Repr)
 			if !list {
-				dir := filepath.Dir(s.File)
-				if _, exists := generated[dir]; !exists {
-					if err = generate(dir); err != nil {
-						return err
-					}
-					generated[dir] = struct{}{}
+				if err = generate(s.File); err != nil {
+					return err
 				}
 			}
 		}
@@ -171,7 +166,8 @@ func getGoGenerateCommands(r io.Reader) (commands []*command) {
 	return commands
 }
 
-func generate(dir string) (err error) {
+func generate(file string) (err error) {
+	dir := filepath.Dir(file)
 	if err = os.Chdir(dir); err != nil {
 		return err
 	}
@@ -180,7 +176,7 @@ func generate(dir string) (err error) {
 	if run != "" {
 		args = append(args, "-run", run)
 	}
-	args = append(args, ".")
+	args = append(args, file)
 	cmd := exec.Command("go", args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
