@@ -27,7 +27,7 @@ func init() {
 
 var Generate = &cobra.Command{
 	Use:           "genx",
-	Version:       "v0.6.1",
+	Version:       "v0.6.2",
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	CompletionOptions: cobra.CompletionOptions{
@@ -120,11 +120,15 @@ var Generate = &cobra.Command{
 		}
 
 		align(pwd, items)
+		generatedFiles := make(map[string]struct{}, len(items))
 		for _, s := range items {
 			fmt.Println(s.Repr)
 			if !list {
-				if err = generate(s.File); err != nil {
-					return err
+				if _, exists := generatedFiles[s.File]; !exists {
+					if err = generate(s.File); err != nil {
+						return err
+					}
+					generatedFiles[s.File] = struct{}{}
 				}
 			}
 		}
